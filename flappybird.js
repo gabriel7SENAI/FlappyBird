@@ -1,4 +1,4 @@
-
+import { salvar } from "./crud.js";
 
 /** @type {CanvasRenderingContext2D} */
 const context = board.getContext("2d"); // Pra desenhar no canvascontext js
@@ -62,6 +62,9 @@ function update() {
   requestAnimationFrame(update);
 
   if (gameOver) {
+    salvar({
+      pontuacao: score,
+    });
     return;
   }
 

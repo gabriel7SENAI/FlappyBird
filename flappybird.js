@@ -1,8 +1,9 @@
-import { salvar } from "./crud.js";
+import { salvar, lerMaiores, deletarMenores } from "./crud.js";
+
+const board = document.getElementById("board");
 
 /** @type {CanvasRenderingContext2D} */
-const context = board.getContext("2d"); // Pra desenhar no canvascontext js
-// Canvas
+const context = board.getContext("2d"); // Canvas
 board.width = 360;
 board.height = 640;
 
@@ -39,13 +40,41 @@ let gravity = 0.4;
 
 // Informações
 let gameOver = false;
+let podeReiniciar = false;
 let score = 0;
+let scoreSalvo = false;
+
+function mostrarPontuacoes(dados) {
+  const lista = document.getElementById("pontuacoes");
+  lista.innerHTML = "";
+
+  if (!dados) return;
+
+  const array = Object.values(dados);
+
+  // ordenar do maior para o menor
+  array.sort((a, b) => b.pontuacao - a.pontuacao);
+
+  array.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = `${item.pontuacao}`;
+    lista.appendChild(li);
+  });
+}
+
+async function carregarScores() {
+  const dados = await lerMaiores();
+
+  if (!dados) return;
+
+  mostrarPontuacoes(dados);
+}
 
 // Quando carregar tudo ele começa
-window.onload = function () {
-  const board = document.getElementById("board");
+window.onload = async function () {
+  await carregarScores();
 
-  birdImg.src = "./img/flappybird.png";
+  birdImg.src = "./img/toretto.png";
   birdImg.onload = function () {
     context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
   };
@@ -64,13 +93,23 @@ window.onload = function () {
   });
 };
 
-function update() {
+async function update() {
   requestAnimationFrame(update);
 
   if (gameOver) {
-    salvar({
-      pontuacao: score,
-    });
+    if (!scoreSalvo) {
+      scoreSalvo = true;
+      salvar({ pontuacao: score });
+
+      await deletarMenores(10);
+
+      // trava o restart
+      podeReiniciar = false;
+
+      setTimeout(() => {
+        podeReiniciar = true;
+      }, 1000); // 1 segundo
+    }
     return;
   }
 
@@ -111,7 +150,7 @@ function update() {
   context.fillText(score, 5, 45);
 
   if (gameOver) {
-    context.fillStyle = "black";
+    context.fillStyle = "white";
     context.fillText("GAME OVER", 40, 320);
   }
 }
@@ -165,11 +204,14 @@ function moveBird(e) {
     velocityY = -6;
 
     if (gameOver) {
+      if (!podeReiniciar) return; // BLOQUEIA
+
       bird.y = birdY;
       velocityY = 0;
       pipeArray = [];
       score = 0;
       gameOver = false;
+      scoreSalvo = false;
     }
   }
 }

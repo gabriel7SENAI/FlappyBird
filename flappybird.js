@@ -74,7 +74,7 @@ async function carregarScores() {
 window.onload = async function () {
   await carregarScores();
 
-  birdImg.src = "./img/flappybird.png";
+  birdImg.src = "./img/toretto.png";
   birdImg.onload = function () {
     context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
   };

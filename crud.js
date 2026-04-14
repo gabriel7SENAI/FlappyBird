@@ -15,8 +15,8 @@ import {
 const referencia = ref(database, "Pontuacoes");
 
 export async function salvar(score) {
-  const novo = push(referencia);
-  await set(novo, score);
+  const pontuacao = push(referencia);
+  await set(pontuacao, score);
 }
 
 export async function lerMaiores() {

@@ -108,7 +108,7 @@ async function update() {
 
       setTimeout(() => {
         podeReiniciar = true;
-      }, 1000); // 1 segundo
+      }, 600);
     }
     return;
   }
@@ -180,19 +180,6 @@ function placePipes() {
   pipeArray.push(topPipe, bottomPipe);
 }
 
-// function moveBird(e) {
-//   if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX") {
-//     velocityY = -6;
-
-//     if (gameOver) {
-//       bird.y = birdY;
-//       pipeArray = [];
-//       score = 0;
-//       gameOver = false;
-//     }
-//   }
-// }
-
 function moveBird(e) {
   if (
     e.type === "click" ||
@@ -204,7 +191,7 @@ function moveBird(e) {
     velocityY = -6;
 
     if (gameOver) {
-      if (!podeReiniciar) return; // BLOQUEIA
+      if (!podeReiniciar) return;
 
       bird.y = birdY;
       velocityY = 0;
